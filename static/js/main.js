@@ -1,11 +1,16 @@
 document.getElementById('pr-form').addEventListener('submit', async function (e) {
     e.preventDefault();
-    const prUrl = document.getElementById('pr_url').value;
+    const prUrl = document.getElementById('pr_url').value.trim();
     const output = document.getElementById('result');
     output.textContent = "⏳ Generating summary...";
 
+    if (!prUrl) {
+        output.textContent = "❌ Please enter a valid PR URL.";
+        return;
+    }
+
     try {
-        const response = await fetch('/review', {
+        const response = await fetch('/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ pr_url: prUrl })

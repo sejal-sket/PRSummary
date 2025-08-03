@@ -8,19 +8,21 @@
 </head>
 <body>
   <div class="container">
-    <h1>🤖 AI PR Reviewer</h1>
+    <h1>🤖 AI Pull Request Reviewer</h1>
+
     <form id="pr-form">
       <input
         type="text"
         id="pr_url"
-        placeholder="Enter GitHub PR URL"
+        name="pr_url"
+        placeholder="Paste GitHub PR URL (e.g., https://github.com/user/repo/pull/123)"
+        pattern="https://github\.com/.+/.+/pull/\d+"
         required
       />
       <button type="submit">Analyze</button>
     </form>
-    <div id="result">
-      <!-- AI Response will appear here -->
-    </div>
+
+    <div id="result"></div>
   </div>
 
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
