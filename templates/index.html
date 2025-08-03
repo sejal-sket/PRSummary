@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI PR Reviewer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <div class="container">
+    <h1>🤖 AI PR Reviewer</h1>
+    <form id="pr-form">
+      <input
+        type="text"
+        id="pr_url"
+        placeholder="Enter GitHub PR URL"
+        required
+      />
+      <button type="submit">Analyze</button>
+    </form>
+    <div id="result">
+      <!-- AI Response will appear here -->
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

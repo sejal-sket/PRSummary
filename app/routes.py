@@ -18,11 +18,9 @@ def review_pr():
             return jsonify({"error": "Invalid GitHub PR URL format."}), 400
 
         owner, repo, pr_number = match.groups()
-
-        # Optional: GitHub token for private repos or more rate limit
         headers = {
             "Accept": "application/vnd.github.v3+json",
-            # "Authorization": "Bearer YOUR_GITHUB_TOKEN"
+            # "Authorization": "Bearer YOUR_GITHUB_TOKEN"  # if needed
         }
 
         pr_api_url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}"
@@ -30,18 +28,21 @@ def review_pr():
         pr_response.raise_for_status()
         pr_data = pr_response.json()
 
-        # Optionally, get list of files changed:
         files_url = pr_data.get("url") + "/files"
         files_response = requests.get(files_url, headers=headers)
         files_response.raise_for_status()
         files_data = files_response.json()
 
-        return jsonify({
-            "title": pr_data.get("title"),
-            "description": pr_data.get("body"),
-            "diff_url": pr_data.get("diff_url"),
-            "files": [f["filename"] for f in files_data]
-        })
+        title = pr_data.get("title")
+        description = pr_data.get("body")
+        files = [f["filename"] for f in files_data]
+
+        summary = f"""🔧 **Title:** {title or 'No title'}\n
+📝 **Description:** {description or 'No description provided.'}\n
+📁 **Files Changed:**\n""" + \
+            "\n".join(f"- {file}" for file in files)
+
+        return jsonify({"summary": summary})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
