@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI PR Reviewer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <div class="container">
+    <h1>🤖 AI Pull Request Reviewer</h1>
+
+    <form id="pr-form">
+      <input
+        type="text"
+        id="pr_url"
+        name="pr_url"
+        placeholder="Paste GitHub PR URL (e.g., https://github.com/user/repo/pull/123)"
+        pattern="https://github\.com/.+/.+/pull/\d+"
+        required
+      />
+      <button type="submit">Analyze</button>
+    </form>
+
+    <div id="result"></div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

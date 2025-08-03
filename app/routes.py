@@ -1,32 +1,16 @@
 from flask import Blueprint, request, jsonify
-import requests
+from app.services.github_service import fetch_pr_details
+from app.services.ollama_service import get_ollama_response
 
-summarize_bp = Blueprint('summarize', __name__)
+bp = Blueprint("routes", __name__)
 
-def query_local_llm(prompt):
+@bp.route('/analyze', methods=['POST'])
+def analyze_pr():
     try:
-        response = requests.post(
-            'http://localhost:11434/api/generate',
-            json={
-                "model": "mistral",
-                "prompt": prompt,
-                "stream": False
-            }
-        )
-        response.raise_for_status()
-        return response.json()["response"]
+        data = request.json
+        pr_url = data.get('pr_url')
+        title, description, file_changes = fetch_pr_details(pr_url)
+        summary = get_ollama_response(title, description, file_changes)
+        return jsonify({"summary": summary})
     except Exception as e:
-        return f"Error contacting local LLM: {str(e)}"
-
-@summarize_bp.route('/summarize', methods=['POST'])
-def summarize():
-    data = request.get_json()
-    pr_content = data.get("pr_content", "")
-
-    if not pr_content:
-        return jsonify({"error": "Missing 'pr_content' field"}), 400
-
-    prompt = f"Summarize the following GitHub Pull Request:\n\n{pr_content}"
-    summary = query_local_llm(prompt)
-
-    return jsonify({"summary": summary})
+        return jsonify({"error": f"❌ Error: {str(e)}"}), 500
